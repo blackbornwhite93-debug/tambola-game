@@ -1,4 +1,4 @@
-// Tambola Game Engine Configuration
+// Upgraded Tambola Game Engine - Interactive Ticket Edition
 const drawnNumbers = [];
 const allNumbers = Array.from({ length: 90 }, (_, i) => i + 1);
 
@@ -9,7 +9,6 @@ function drawNextNumber() {
         return null;
     }
     
-    // Filter out numbers that have already been pulled
     let availableNumbers = allNumbers.filter(n => !drawnNumbers.includes(n));
     let randomIndex = Math.floor(Math.random() * availableNumbers.length);
     let drawn = availableNumbers[randomIndex];
@@ -20,9 +19,7 @@ function drawNextNumber() {
     return drawn;
 }
 
-// Speaks the number aloud and displays it on the big display board
 function announceNumber(num) {
-    // Uses standard browser audio to speak out the number
     const speech = new SpeechSynthesisUtterance(`Number ${num}`);
     window.speechSynthesis.speak(speech);
     
@@ -30,7 +27,6 @@ function announceNumber(num) {
     if (visualDisplay) visualDisplay.innerText = num;
 }
 
-// Turns the cell grid item green on the master 1-90 board
 function updateBoardUI(num) {
     const cell = document.getElementById(`cell-${num}`);
     if (cell) cell.classList.add("called");
@@ -39,21 +35,18 @@ function updateBoardUI(num) {
 // --- 2. TAMBOLA TICKET GENERATION LOGIC ---
 function generateTambolaTicket() {
     let ticket = Array.from({ length: 3 }, () => Array(9).fill(0));
-    
-    // Generate valid sorted numbers for each of the 9 vertical columns
     let columns = [];
+    
     for (let i = 0; i < 9; i++) {
         let min = i * 10 + 1;
         let max = (i === 8) ? 90 : (i + 1) * 10;
         let pool = [];
         for (let n = min; n <= max; n++) pool.push(n);
         
-        // Shuffle the column pool random numbers
         pool.sort(() => Math.random() - 0.5);
         columns.push(pool.slice(0, 3).sort((a, b) => a - b));
     }
     
-    // Uniformly distribute exactly 5 numbers per row across the matrix
     for (let row = 0; row < 3; row++) {
         let placedIndices = [];
         while (placedIndices.length < 5) {
@@ -67,13 +60,11 @@ function generateTambolaTicket() {
             ticket[row][colIdx] = columns[colIdx].pop();
         });
     }
-    
     return ticket;
 }
 
 // --- 3. RUN THE GAME BOOT INITIALIZATION ---
 function initGame() {
-    // Generate the master board layout numbers grid dynamically (1 to 90)
     const boardContainer = document.getElementById("board");
     if (boardContainer) {
         boardContainer.innerHTML = "";
@@ -86,7 +77,6 @@ function initGame() {
         }
     }
 
-    // Generate and render a unique 15-number ticket for the player
     const myTicket = generateTambolaTicket();
     const ticketContainer = document.getElementById("ticket");
     if (ticketContainer) {
@@ -95,12 +85,20 @@ function initGame() {
             row.forEach(cellValue => {
                 let cell = document.createElement("div");
                 cell.className = "ticket-cell";
-                cell.innerText = cellValue === 0 ? "" : cellValue;
+                
+                if (cellValue === 0) {
+                    cell.innerText = "";
+                } else {
+                    cell.innerText = cellValue;
+                    // NEW: Add a touch/click event listener to cross numbers off manually
+                    cell.addEventListener("click", function() {
+                        cell.classList.toggle("marked");
+                    });
+                }
                 ticketContainer.appendChild(cell);
             });
         });
     }
 }
 
-// Fire up the screen setup as soon as page elements render completely
 document.addEventListener("DOMContentLoaded", initGame);
