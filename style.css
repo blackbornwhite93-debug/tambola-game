@@ -1,0 +1,106 @@
+/* Custom styling for Tambola gaming interface */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #121212;
+    color: #ffffff;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+h1, h2 {
+    color: #f39c12;
+    margin-bottom: 10px;
+}
+
+/* Big Display Box for Called Numbers */
+#current-number {
+    font-size: 5rem;
+    font-weight: bold;
+    background-color: #1e1e1e;
+    padding: 20px 50px;
+    border-radius: 15px;
+    border: 3px solid #f39c12;
+    margin: 20px 0;
+    text-shadow: 0 0 10px rgba(243, 156, 18, 0.5);
+}
+
+/* Call Number Action Button */
+button {
+    background-color: #e67e22;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background 0.2s;
+    margin-bottom: 30px;
+}
+
+button:hover {
+    background-color: #d35400;
+}
+
+/* Master Caller Board (1-90 Grid) */
+.board-grid {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr);
+    gap: 8px;
+    max-width: 600px;
+    background-color: #1e1e1e;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 40px;
+}
+
+.board-cell {
+    background-color: #2c3e50;
+    width: 45px;
+    height: 45px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+/* Highlighted drawn number state */
+.board-cell.called {
+    background-color: #27ae60 !important;
+    color: white;
+    box-shadow: 0 0 8px #27ae60;
+    transform: scale(1.05);
+}
+
+/* Player Ticket (3x9 Grid Layout) */
+.ticket-grid {
+    display: grid;
+    grid-template-columns: repeat(9, 1fr);
+    gap: 2px;
+    max-width: 500px;
+    background-color: #7f8c8d;
+    padding: 5px;
+    border-radius: 5px;
+}
+
+.ticket-cell {
+    background-color: #ffffff;
+    color: #2c3e50;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+/* Style for blank spaces on ticket */
+.ticket-cell:empty {
+    background-color: #bdc3c7;
+}
