@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambola Live Dashboard</title>
+    <style>
+        :root {
+            --bg-color: #0b0f19;
+            --card-bg: #151d30;
+            --accent-yellow: #ffcc00;
+            --live-green: #00ff66;
+            --text-main: #ffffff;
+            --text-muted: #8a99ad;
+        }
+        body { 
+            font-family: 'Segoe UI', Arial, sans-serif; 
+            background-color: var(--bg-color); 
+            color: var(--text-main); 
+            margin: 0; 
+            padding: 15px; 
+            font-size: 14px;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e2942, #151d30);
+            padding: 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border: 1px solid #243454;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+        h1 { margin: 0; font-size: 22px; color: var(--accent-yellow); text-transform: uppercase; letter-spacing: 1px; }
+        .subtitle { margin: 5px 0 0 0; color: var(--text-muted); font-size: 12px; }
+        
+        .main-display {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        .caller-panel {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid #1f2c47;
+            text-align: center;
+        }
+        .live-badge {
+            background: rgba(0, 255, 102, 0.15);
+            color: var(--live-green);
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: bold;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        #current-number { 
+            font-size: 85px; 
+            font-weight: 800; 
+            color: var(--accent-yellow); 
+            margin: 10px 0; 
+            line-height: 1;
+            text-shadow: 0 0 20px rgba(255, 204, 0, 0.4);
+        }
+        .control-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 15px;
+        }
+        .btn { 
+            background: linear-gradient(180deg, #ffdd33, #ffcc00); 
+            color: #000; 
+            border: none; 
+            padding: 12px 24px; 
+            font-size: 15px; 
+            font-weight: bold; 
+            border-radius: 8px; 
+            cursor: pointer; 
+            flex: 1;
+            max-width: 180px;
+            box-shadow: 0 3px 10px rgba(255,204,0,0.2);
+        }
+        .btn-reset {
+            background: #243454;
+            color: #ff4d4d;
+            border: 1px solid #3b4f76;
+        }
+        
+        .board-container {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #1f2c47;
+        }
+        .board-title {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 10px;
+            text-align: left;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+        .board { 
+            display: grid; 
+            grid-template-columns: repeat(10, 1fr); 
+            gap: 4px; 
+        }
+        .cell { 
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #1c263f; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            font-size: 13px; 
+            color: #526685; 
+            border: 1px solid #253352;
+        }
+        .cell.called { 
+            background: linear-gradient(135deg, #00ff66, #00b347); 
+            color: #000; 
+            border: none;
+            box-shadow: 0 0 8px rgba(0,255,102,0.4);
+        }
+        
+        .ticket-section {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid #1f2c47;
+            margin-top: 15px;
+        }
+        .ticket-wrapper {
+            margin-top: 15px;
+            background: #ffffff;
+            padding: 8px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+        }
+        .ticket { 
+            border-collapse: collapse; 
+            width: 100%; 
+        }
+        .ticket td { 
+            border: 2px solid #b5b5b5; 
+            width: 11.11%; 
+            height: 42px; 
+            text-align: center; 
+            font-size: 18px; 
+            font-weight: 700; 
+            color: #111;
+            background: #fdfdfd;
+        }
+        .ticket td.blank {
+            background: #e9ecf0;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>StartTambola Host</h1>
+        <div class="subtitle">Live Automated Board & Generation Panel</div>
+    </div>
+    
+    <div class="main-display">
+        <div class="caller-panel">
+            <div class="live-badge">● Live Caller</div>
+            <div id="current-number">--</div>
+            <div class="control-row">
+                <button class="btn" onclick="drawNumber()">Next Number</button>
+                <button class="btn btn-reset" onclick="resetGame()">Reset</button>
+            </div>
+        </div>
+        
+        <div class="board-container">
+            <div class="board-title">Game Sheet Board (1-90)</div>
+            <div class="board" id="board"></div>
+        </div>
+    </div>
+    
+    <div class="ticket-section">
+        <div class="board-title">System Ticket Generator</div>
+        <button class="btn" style="max-width:100%;" onclick="generateTicket()">Create Premium Ticket</button>
+        <div id="ticket-container"></div>
+    </div>
+
+    <script>
+        let calledNumbers = [];
+        const board = document.getElementById('board');
+
+        function initBoard() {
+            board.innerHTML = '';
+            for (let i = 1; i <= 90; i++) {
+                let cell = document.createElement('div');
+                cell.className = 'cell';
+                cell.id = 'cell-' + i;
+                cell.innerText = i;
+                board.appendChild(cell);
+            }
+        }
+
+        function drawNumber() {
+            if (calledNumbers.length >= 90) {
+                alert("Game Over! All numbers drawn.");
+                return;
+            }
+            let rand;
+            do {
+                rand = Math.floor(Math.random() * 90) + 1;
+            } while (calledNumbers.includes(rand));
+
+            calledNumbers.push(rand);
+            document.getElementById('current-number').innerText = rand;
+            document.getElementById('cell-' + rand).classList.add('called');
+            
+            // Clear previous voices to handle fast clicking cleanly
+            window.speechSynthesis.cancel();
+            let speech = new SpeechSynthesisUtterance(rand.toString());
+            speech.rate = 0.9;
+            window.speechSynthesis.speak(speech);
+        }
+
+        function resetGame() {
+            if(confirm("Confirm reset? This clears the live board.")) {
+                calledNumbers = [];
+                document.getElementById('current-number').innerText = '--';
+                initBoard();
+                document.getElementById('ticket-container').innerHTML = '';
+            }
+        }
+
+        function generateTicket() {
+            let ticket = Array.from({ length: 3 }, () => Array(9).fill(0));
+            for (let col = 0; col < 9; col++) {
+                let min = col * 10 + 1;
+                let max = col * 10 + 10;
+                if (col === 8) max = 90;
+                
+                let nums = [];
+                while (nums.length < 3) {
+                    let n = Math.floor(Math.random() * (max - min + 1)) + min;
+                    if (!nums.includes(n)) nums.push(n);
+                }
+                nums.sort((a, b) => a - b);
+                for (let row = 0; row < 3; row++) {
+                    ticket[row][col] = nums[row];
+                }
+            }
+
+            for (let row = 0; row < 3; row++) {
+                let emptyIndices = [];
+                while (emptyIndices.length < 4) {
+                    let idx = Math.floor(Math.random() * 9);
+                    if (!emptyIndices.includes(idx)) emptyIndices.push(idx);
+                }
+                for (let idx of emptyIndices) {
+                    ticket[row][idx] = "";
+                }
+            }
+
+            let tableHtml = '<div class="ticket-wrapper"><table class="ticket">';
+            for (let row = 0; row < 3; row++) {
+                tableHtml += '<tr>';
+                for (let col = 0; col < 9; col++) {
+                    let val = ticket[row][col];
+                    if (val === "") {
+                        tableHtml += '<td class="blank"></td>';
+                    } else {
+                        tableHtml += `<td>${val}</td>`;
+                    }
+                }
+                tableHtml += '</tr>';
+            }
+            tableHtml += '</table></div>';
+            document.getElementById('ticket-container').innerHTML = tableHtml;
+        }
+
+        initBoard();
+    </script>
+</body>
+</html>
